@@ -2,64 +2,62 @@ import products
 import store
 
 
+def list_products(store_obj):
+    """Print all active products with index numbers and return them."""
+    all_products = store_obj.get_all_products()
+    print("\n------")
+    for i, product in enumerate(all_products, 1):
+        print(f"{i}. ", end="")
+        product.show()
+    print("------")
+    return all_products
+
+
+def make_order(store_obj):
+    """Prompt user to build and place an order."""
+    all_products = list_products(store_obj)
+    shopping_list = []
+    print("When you want to finish order, enter empty text.")
+    while True:
+        product_input = input("Which product # do you want? ")
+        if product_input == "":
+            break
+        quantity_input = input("What amount do you want? ")
+        if quantity_input == "":
+            break
+        try:
+            product_num = int(product_input)
+            quantity = int(quantity_input)
+            if 1 <= product_num <= len(all_products):
+                shopping_list.append((all_products[product_num - 1], quantity))
+                print("Product added to list!")
+            else:
+                print("Invalid product number.")
+        except ValueError:
+            print("Please enter valid numbers.")
+
+    if shopping_list:
+        try:
+            total = store_obj.order(shopping_list)
+            print(f"\nOrder made! Total payment: ${total}")
+        except Exception as e:
+            print(f"\nError: {e}")
+
+
 def start(store_obj):
     """Runs the app, instances the store obj"""
     while True:
-        print("\n   Store Menu")
-        print("   ----------")
-        print("1. List all products in store")
-        print("2. Show total amount in store")
-        print("3. Make an order")
-        print("4. Quit")
+        print("\n   Store Menu\n   ----------\n1. List all products in store"
+              "\n2. Show total amount in store\n3. Make an order\n4. Quit")
 
         choice = input("\nPlease choose a number: ")
 
         if choice == "1":
-            all_products = store_obj.get_all_products()
-            print("\n------")
-            for i, product in enumerate(all_products, 1):
-                print(f"{i}. ", end="")
-                product.show()
-            print("------")
-
+            list_products(store_obj)
         elif choice == "2":
             print(f"\nTotal of {store_obj.get_total_quantity()} items in store")
-
         elif choice == "3":
-            all_products = store_obj.get_all_products()
-            print("\n------")
-            for i, product in enumerate(all_products, 1):
-                print(f"{i}. ", end="")
-                product.show()
-            print("------")
-
-            shopping_list = []
-            print("When you want to finish order, enter empty text.")
-            while True:
-                product_input = input("Which product # do you want? ")
-                if product_input == "":
-                    break
-                quantity_input = input("What amount do you want? ")
-                if quantity_input == "":
-                    break
-                try:
-                    product_num = int(product_input)
-                    quantity = int(quantity_input)
-                    if 1 <= product_num <= len(all_products):
-                        shopping_list.append((all_products[product_num - 1], quantity))
-                        print("Product added to list!")
-                    else:
-                        print("Invalid product number.")
-                except ValueError:
-                    print("Please enter valid numbers.")
-
-            if shopping_list:
-                try:
-                    total = store_obj.order(shopping_list)
-                    print(f"\nOrder made! Total payment: ${total}")
-                except Exception as e:
-                    print(f"\nError: {e}")
-
+            make_order(store_obj)
         elif choice == "4":
             print("Goodbye!")
             break
